@@ -33,6 +33,8 @@ namespace API.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductDTO model)
         {
+          
+
             await _productWriteRepository.AddAsync(new()
             {
                 Name = model.Name,

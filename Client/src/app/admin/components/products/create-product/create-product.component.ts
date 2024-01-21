@@ -35,7 +35,12 @@ export class CreateProductComponent extends BaseComponent implements OnInit {
         messageType: AlertifyMessageType.Success,
         position: AlertifyPosition.BottomRight
       })
+    }, errorMessage => {
+      this.alertify.message(errorMessage, {
+        dismissOthers: true,
+        messageType: AlertifyMessageType.Error,
+        position: AlertifyPosition.TopRight
+      });
     });
   }
-
 }
