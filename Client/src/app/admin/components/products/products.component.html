@@ -1,6 +1,6 @@
 <mat-drawer-container class="products-list">
     <mat-drawer mode="side" opened>
-        <app-create-product></app-create-product>
+        <app-create-product (createdProductEvent)="createdProductEventListener()"></app-create-product>
     </mat-drawer>
     <mat-drawer-content>
         <app-list-product></app-list-product>

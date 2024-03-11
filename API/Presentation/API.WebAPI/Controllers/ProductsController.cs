@@ -1,5 +1,6 @@
 ﻿using API.Application.DTOs.Products;
 using API.Application.Repositories;
+using API.Application.RequestParameters;
 using API.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +20,23 @@ namespace API.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] Pagination pagination)
         {
-            return Ok(_productReadRepository.GetAll(false));
+
+            int totalCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(false).Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.CreatedDate,
+                p.LastUpdatedDate
+            })
+                .Skip(pagination.PageIndex * pagination.PageSize)
+                .Take(pagination.PageSize);
+
+            return Ok(new { totalCount, products });
         }
 
         [HttpGet("{id}")]
@@ -33,7 +48,7 @@ namespace API.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductDTO model)
         {
-          
+
 
             await _productWriteRepository.AddAsync(new()
             {
