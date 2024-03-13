@@ -1,6 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponent, DeleteState } from 'src/app/dialogs/delete-dialog/delete-dialog.component';
+import { AlertifyMessageType, AlertifyPosition, AlertifyService } from 'src/app/services/admin/alertify.service';
+import { HttpClientService } from 'src/app/services/common/http-client.service';
 import { ProductService } from 'src/app/services/common/models/product.service';
 
 declare var $: any;
@@ -12,7 +15,8 @@ export class DeleteDirective {
   constructor(
     private element: ElementRef,
     private renderer: Renderer2,
-    private productService: ProductService,
+    private httpClientService: HttpClientService,
+    private alertifyService: AlertifyService,
     public dialog: MatDialog
   ) {
     const button = renderer.createElement('button');
@@ -25,6 +29,7 @@ export class DeleteDirective {
   }
 
   @Input() id: string;
+  @Input() controller: string;
   @Output() updateList: EventEmitter<any> = new EventEmitter();
 
   @HostListener('click')
@@ -32,13 +37,28 @@ export class DeleteDirective {
     this.openDialog(async () => {
       const td: HTMLTableCellElement = this.element.nativeElement;
 
-      await this.productService.delete(this.id);
-
-      $(td.parentElement).animate({
-        opacity: 0,
-        left: '+=50',
-        height: 'toggle'
-      }, () => this.updateList.emit())
+      await this.httpClientService.delete({
+        controller: this.controller
+      }, this.id).subscribe(() => {
+        $(td.parentElement).animate({
+          opacity: 0,
+          left: '+=50',
+          height: 'toggle'
+        }, () => {
+          this.updateList.emit();
+          this.alertifyService.message('Product is deleted successfully', {
+            dismissOthers: true,
+            messageType: AlertifyMessageType.Success,
+            position: AlertifyPosition.TopRight
+          });
+        })
+      }, (errorResponse: HttpErrorResponse) => {
+        this.alertifyService.message('Unexpected error happens!!!', {
+          dismissOthers: true,
+          messageType: AlertifyMessageType.Error,
+          position: AlertifyPosition.TopRight
+        })
+      })
     })
   }
 
