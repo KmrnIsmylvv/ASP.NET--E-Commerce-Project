@@ -10,14 +10,14 @@ import { ProductService } from 'src/app/services/common/models/product.service';
 @Component({
   selector: 'app-list-product',
   templateUrl: './list-product.component.html',
-  styleUrls: ['./list-product.component.scss']
+  styleUrls: ['./list-product.component.scss'],
 })
 export class ListProductComponent implements OnInit {
   constructor(private productService: ProductService, private spinner: NgxSpinnerService, private alertifyService: AlertifyService) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate'];
+  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'edit', 'delete'];
   dataSource: MatTableDataSource<ListProduct> = null;
 
   async getProductList(): Promise<void> {
