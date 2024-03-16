@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "delete-dialog.component.scss"
+    ],
+    "names": [],
+    "file": "delete-dialog.component.css"
+}
