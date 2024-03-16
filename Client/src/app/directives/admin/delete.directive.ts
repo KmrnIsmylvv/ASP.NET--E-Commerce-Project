@@ -39,25 +39,28 @@ export class DeleteDirective {
 
       await this.httpClientService.delete({
         controller: this.controller
-      }, this.id).subscribe(() => {
-        $(td.parentElement).animate({
-          opacity: 0,
-          left: '+=50',
-          height: 'toggle'
-        }, () => {
-          this.updateList.emit();
-          this.alertifyService.message('Product is deleted successfully', {
+      }, this.id).subscribe({
+        next: () => {
+          $(td.parentElement).animate({
+            opacity: 0,
+            left: '+=50',
+            height: 'toggle'
+          }, () => {
+            this.updateList.emit();
+            this.alertifyService.message('Product is deleted successfully', {
+              dismissOthers: true,
+              messageType: AlertifyMessageType.Success,
+              position: AlertifyPosition.TopRight
+            });
+          })
+        },
+        error: () => {
+          this.alertifyService.message('Unexpected error happens!!!', {
             dismissOthers: true,
-            messageType: AlertifyMessageType.Success,
+            messageType: AlertifyMessageType.Error,
             position: AlertifyPosition.TopRight
-          });
-        })
-      }, (errorResponse: HttpErrorResponse) => {
-        this.alertifyService.message('Unexpected error happens!!!', {
-          dismissOthers: true,
-          messageType: AlertifyMessageType.Error,
-          position: AlertifyPosition.TopRight
-        })
+          })
+        }
       })
     })
   }
